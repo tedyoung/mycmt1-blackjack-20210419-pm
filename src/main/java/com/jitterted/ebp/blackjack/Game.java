@@ -39,14 +39,22 @@ public class Game {
   }
 
   public void initialDeal() {
+    dealRoundOfCards();
+    dealRoundOfCards();
+  }
 
-    // deal first round of cards, players first
-    playerHand.add(deck.draw());
-    dealerHand.add(deck.draw());
+  private void dealRoundOfCards() {
+    // Blackjack rules say: players get dealt cards first
+    dealCardToPlayer();
+    dealCardToDealer();
+  }
 
-    // deal next round of cards
-    playerHand.add(deck.draw());
+  private void dealCardToDealer() {
     dealerHand.add(deck.draw());
+  }
+
+  private void dealCardToPlayer() {
+    playerHand.add(deck.draw());
   }
 
   public void play() {
@@ -55,11 +63,11 @@ public class Game {
     while (!playerBusted) {
       displayGameState();
       String playerChoice = inputFromPlayer().toLowerCase();
-      if (playerChoice.startsWith("s")) {
+      if (playerStands(playerChoice)) {
         break;
       }
-      if (playerChoice.startsWith("h")) {
-        playerHand.add(deck.draw());
+      if (playerHits(playerChoice)) {
+        dealCardToPlayer();
         if (handValueOf(playerHand) > 21) {
           playerBusted = true;
         }
@@ -68,12 +76,7 @@ public class Game {
       }
     }
 
-    // Dealer makes its choice automatically based on a simple heuristic (<=16, hit, 17>=stand)
-    if (!playerBusted) {
-      while (handValueOf(dealerHand) <= 16) {
-        dealerHand.add(deck.draw());
-      }
-    }
+    dealerTurn(playerBusted);
 
     displayFinalGameState();
 
@@ -90,16 +93,30 @@ public class Game {
     }
   }
 
+  private boolean playerHits(String playerChoice) {
+    return playerChoice.startsWith("h");
+  }
+
+  private boolean playerStands(String playerChoice) {
+    return playerChoice.startsWith("s");
+  }
+
+  private void dealerTurn(boolean playerBusted) {
+    if (!playerBusted) {
+      // Blackjack Rules say: Dealer makes its choice automatically based on a simple heuristic (<=16, hit, 17>=stand)
+      while (handValueOf(dealerHand) <= 16) {
+        dealCardToDealer();
+      }
+    }
+  }
+
   public int handValueOf(List<Card> hand) {
     int handValue = hand
         .stream()
         .mapToInt(Card::rankValue)
         .sum();
 
-    // does the hand contain at least 1 Ace?
-    boolean hasAce = hand
-        .stream()
-        .anyMatch(card -> card.rankValue() == 1);
+    boolean hasAce = handHasAce(hand);
 
     // if the total hand value <= 11, then count the Ace as 11 by adding 10
     if (hasAce && handValue < 11) {
@@ -107,6 +124,12 @@ public class Game {
     }
 
     return handValue;
+  }
+
+  private boolean handHasAce(List<Card> hand) {
+    return hand
+        .stream()
+        .anyMatch(card -> card.rankValue() == 1);
   }
 
   private String inputFromPlayer() {
