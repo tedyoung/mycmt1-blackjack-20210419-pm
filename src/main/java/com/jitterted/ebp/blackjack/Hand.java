@@ -38,6 +38,7 @@ public class Hand {
     return handValue;
   }
 
+  // specific to Dealer
   Card firstCard() {
     return cards.get(0);
   }
@@ -47,5 +48,22 @@ public class Hand {
                             .map(Card::display)
                             .collect(Collectors.joining(
                                ansi().cursorUp(6).cursorRight(1).toString())));
+  }
+
+  boolean isBusted() {
+    return value() > 21;
+  }
+
+  // ?? Should this be a special kind of Hand, e.g., DealerHand
+  boolean shouldDealerHit() {
+    return value() <= 16;
+  }
+
+  boolean pushes(Hand hand) {
+    return hand.value() == value();
+  }
+
+  boolean beats(Hand hand) {
+    return hand.value() < value();
   }
 }
