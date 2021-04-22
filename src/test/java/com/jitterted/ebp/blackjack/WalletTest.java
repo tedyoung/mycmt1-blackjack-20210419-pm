@@ -42,8 +42,14 @@ public class WalletTest {
         .isEqualTo(7);
   }
 
-//  @Test
-//  public void newWalletAdd6AndAdd5ThenBalanceIs11() throws Exception {
-//
-//  }
+  @Test
+  public void newWalletAdd6AndAdd5ThenBalanceIs11() throws Exception {
+    Wallet wallet = new Wallet();
+
+    wallet.addMoney(6);
+    wallet.addMoney(5);
+
+    assertThat(wallet.balance())
+        .isEqualTo(6 + 5);
+  }
 }

@@ -8,7 +8,7 @@ public class Wallet {
   }
 
   public void addMoney(int amount) {
-    balance = amount;
+    balance += amount;
   }
 
   public int balance() {
