@@ -16,7 +16,6 @@ public class HandTest {
                                new Card(DUMMY_SUIT, "4"));
     Hand hand = new Hand(cards);
 
-
     assertThat(hand.isBusted())
         .isTrue();
   }
