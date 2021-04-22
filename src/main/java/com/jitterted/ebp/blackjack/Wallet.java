@@ -16,6 +16,10 @@ public class Wallet {
     return balance;
   }
 
+  public void bet(int amount) {
+    balance -= amount;
+  }
+
   private void requirePositiveAmount(int amount) {
     if (amount <= 0) {
       throw new IllegalArgumentException();
